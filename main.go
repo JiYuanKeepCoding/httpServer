@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
-	connector.Run("8080")
+	server := connector.NewSever()
+	server.Run("8080")
 }
