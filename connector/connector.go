@@ -3,6 +3,7 @@ package connector
 import (
 	"context"
 	"fmt"
+	"github.com/golang/glog"
 	"httpServer/converter"
 	"httpServer/router"
 	"io"
@@ -49,10 +50,11 @@ func (s *Server) Run(port string) {
 	}
 
 	s.addTermHandler(ln)
-
+	glog.Infof("Server started listen to 8080")
 	go func() {
 		for {
 			conn, err := ln.Accept()
+			glog.V(3).Infof("New connection from %s", conn.RemoteAddr())
 			if err != nil {
 				fmt.Println(err)
 				if strings.Contains(err.Error(), "closed") {
@@ -121,7 +123,9 @@ func (s *Server) handleConnection(conn *net.Conn) {
 			break
 		}
 	}
+	glog.V(2).Infof("Request %s", parseContext.Path)
 	response := router.HandleHttpRequest(parseContext.HttpPayload)
-	fmt.Printf("Client IP: %s, Response Code: %d \r\n", parseContext.Ip, response.Status)
+	glog.V(2).Infof("Client IP: %s, Response Code: %d \r\n", parseContext.Ip, response.Status)
 	converter.WriteResponse(*conn, response)
+	glog.V(2).Infof("Response %s", response)
 }
