@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: geektime
+spec:
+  tls:
+    - hosts:
+        - geektime.com
+      secretName: http-server
+  rules:
+    - host: "geektime.com"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: httpserver
+                port:
+                  number: 80
